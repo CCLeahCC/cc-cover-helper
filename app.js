@@ -104,11 +104,6 @@ const elements = Object.fromEntries(stateIds.map((id) => [id, document.getElemen
 const promptOutput = document.getElementById("promptOutput");
 const statusText = document.getElementById("statusText");
 const swatchRow = document.getElementById("swatchRow");
-const coverImage = document.getElementById("coverImage");
-const imageStatus = document.getElementById("imageStatus");
-const previewPlaceholder = document.getElementById("previewPlaceholder");
-const downloadImage = document.getElementById("downloadImage");
-const generateImageBtn = document.getElementById("generateImageBtn");
 
 function fillSelect(select, options, formatter = (item) => item) {
   const previous = select.value;
@@ -192,28 +187,6 @@ function buildPrompt() {
   ].join("\n");
 }
 
-function buildImagePrompt() {
-  const title = elements.coverTitle.value.trim() || getTitles(elements.niche.value, elements.contentType.value)[0];
-  const niche = elements.niche.value;
-  const contentType = elements.contentType.value;
-  const layout = elements.layout.value;
-  const style = elements.style.value;
-  const palette = selectedPalette();
-  const points = elements.points.value.trim() || niches[niche].points;
-
-  return [
-    `为小红书「${niche}」账号生成一张「${contentType}」封面效果图。`,
-    `封面主标题：${title}`,
-    `内容要点：${points}`,
-    `设计方向：${layout}，${style}。`,
-    `配色：${palette.name}。`,
-    "画布为竖版 3:4，小红书图文封面比例。",
-    "整体是成熟内容创作者会发布的平面设计封面，构图清晰，有强主视觉和明确标题区。",
-    "可以使用真实感照片、色块、纸张纹理、细线、图标和材质拼贴，但画面保持高级、干净、可读。",
-    "中文标题要尽量清晰准确，避免错别字、乱码、文字挤压、元素堆满边缘、廉价贴纸感和山寨品牌标识。",
-  ].join("\n");
-}
-
 function render() {
   const palette = selectedPalette();
   renderSwatches(palette);
@@ -256,47 +229,6 @@ function copyPrompt() {
   }, 1400);
 }
 
-function setImageState(text, isLoading = false) {
-  imageStatus.textContent = text;
-  generateImageBtn.disabled = isLoading;
-  generateImageBtn.textContent = isLoading ? "生成中..." : "生成封面图";
-}
-
-async function generateCoverImage() {
-  setImageState("生成中", true);
-  previewPlaceholder.hidden = false;
-  previewPlaceholder.textContent = "正在生成封面效果图，通常需要几十秒。";
-
-  try {
-    const response = await fetch("/api/generate-image", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        prompt: buildImagePrompt(),
-        title: elements.coverTitle.value.trim(),
-        niche: elements.niche.value,
-        contentType: elements.contentType.value,
-        palette: selectedPalette().name,
-      }),
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error || "图片生成失败");
-
-    coverImage.src = data.imageUrl;
-    coverImage.hidden = false;
-    previewPlaceholder.hidden = true;
-    downloadImage.href = data.imageUrl;
-    downloadImage.hidden = false;
-    setImageState("已生成", false);
-  } catch (error) {
-    coverImage.hidden = true;
-    downloadImage.hidden = true;
-    previewPlaceholder.hidden = false;
-    previewPlaceholder.textContent = error.message || "图片生成失败，请稍后再试。";
-    setImageState("未生成", false);
-  }
-}
-
 fillSelect(elements.niche, Object.keys(niches));
 fillSelect(elements.contentType, contentTypes);
 syncOptions(true);
@@ -322,4 +254,3 @@ document.getElementById("generateBtn").addEventListener("click", render);
 document.getElementById("shuffleBtn").addEventListener("click", shuffleExample);
 document.getElementById("titleRefreshBtn").addEventListener("click", refreshTitle);
 document.getElementById("copyBtn").addEventListener("click", copyPrompt);
-generateImageBtn.addEventListener("click", generateCoverImage);
