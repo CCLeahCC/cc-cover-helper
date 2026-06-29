@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CC封面小助手</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace" aria-label="小红书封面 prompt 生成器">
+        <div class="editor-panel">
+          <div class="brand-row">
+            <div class="brand-copy">
+              <p class="eyebrow">CC COVER ASSISTANT</p>
+              <h1>CC封面小助手</h1>
+              <p class="intro-text">把账号方向、标题、版式和配色整理成一段可直接粘贴的封面设计 Prompt。</p>
+            </div>
+            <button class="icon-button" id="shuffleBtn" type="button" aria-label="随机灵感" title="随机灵感">
+              <span aria-hidden="true">↻</span>
+            </button>
+          </div>
+
+          <div class="step-block">
+            <div class="step-head">
+              <span>01</span>
+              <div>
+                <h2>内容与标题</h2>
+              </div>
+            </div>
+            <div class="two-col">
+              <label class="field">
+                <span>账号领域</span>
+                <select id="niche"></select>
+              </label>
+
+              <label class="field">
+                <span>内容类型</span>
+                <select id="contentType"></select>
+              </label>
+            </div>
+
+            <label class="field title-field">
+              <span>推荐标题</span>
+              <div class="title-control">
+                <input id="coverTitle" type="text" maxlength="32" />
+                <button id="titleRefreshBtn" type="button">换一个</button>
+              </div>
+            </label>
+          </div>
+
+          <div class="step-block">
+            <div class="step-head">
+              <span>02</span>
+              <div>
+                <h2>视觉方案</h2>
+                <p>版式、风格和配色会一起写进 Prompt。</p>
+              </div>
+            </div>
+            <div class="two-col">
+              <label class="field">
+                <span>封面版式</span>
+                <select id="layout"></select>
+              </label>
+
+              <label class="field">
+                <span>视觉风格</span>
+                <select id="style"></select>
+              </label>
+            </div>
+
+            <label class="field">
+              <span>配色方向</span>
+              <select id="palette"></select>
+            </label>
+            <div class="swatch-row" id="swatchRow" aria-label="当前配色"></div>
+          </div>
+
+          <div class="step-block">
+            <div class="step-head">
+              <span>03</span>
+              <div>
+                <h2>内容要点</h2>
+                <p>写清楚这篇封面要承载的重点信息。</p>
+              </div>
+            </div>
+            <label class="field">
+              <span>封面信息</span>
+              <textarea id="points" rows="4"></textarea>
+            </label>
+          </div>
+
+          <div class="action-row">
+            <button class="primary-button" id="generateBtn" type="button">生成 Prompt</button>
+          </div>
+        </div>
+
+        <div class="result-panel">
+          <div class="output-card">
+            <div class="output-head">
+              <p class="eyebrow">READY TO PASTE</p>
+              <span id="statusText">已生成</span>
+            </div>
+            <textarea id="promptOutput" rows="13" readonly></textarea>
+            <button class="copy-output-button" id="copyBtn" type="button">一键复制</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
